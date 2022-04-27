@@ -1,0 +1,38 @@
+body {
+    margin: 0
+}
+
+.d-flex {
+    display: flex
+}
+
+.col {
+    flex-direction: column;
+}
+
+.jc-sb {
+    justify-content: space-between;
+}
+
+.pl-med, .pb-med {
+    padding-left: 1rem;
+}
+
+.pr-med, .pb-med {
+    padding-right: 1rem;
+}
+
+.content-container {
+    /* flex-basis: 0;
+    flex-grow: 1; */
+    max-width: 100%;
+    min-height: 5rem;
+}
+
+.data-display {
+    min-height: 5rem;
+}
+
+#topbar {
+    height: 3em;
+}

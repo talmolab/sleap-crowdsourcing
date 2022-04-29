@@ -1,9 +1,9 @@
 body {
-    margin: 0
+    margin: 0;
 }
 
 .d-flex {
-    display: flex
+    display: flex;
 }
 
 .col {
@@ -14,17 +14,17 @@ body {
     justify-content: space-between;
 }
 
-.pl-med, .pb-med {
+.pl-med,
+.pb-med {
     padding-left: 1rem;
 }
 
-.pr-med, .pb-med {
+.pr-med,
+.pb-med {
     padding-right: 1rem;
 }
 
 .content-container {
-    /* flex-basis: 0;
-    flex-grow: 1; */
     max-width: 100%;
     min-height: 5rem;
 }

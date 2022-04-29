@@ -1,52 +1,52 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const c = document.getElementById('c');
 const topbar = document.getElementById('topbar');
+const container = document.querySelector('.content-container');
+const canvas = initCanvas('c');
 
-canvas.width = getCanvasDim().xDim;
-canvas.height = getCanvasDim().yDim;
+setBackground(data.img, canvas);
+console.log(canvas.backgroundImage);
 
-console.log(data.img);
-
-class Img {
-    constructor(src, ctx) {
-        this.img = new Image();
-        this.img.src = src;
-        this.ctx = ctx;
-        this.aspect_ratio = this.img.naturalWidth / this.img.naturalHeight;
-    }
-
-    draw(w = this.ctx.canvas.width, h = this.ctx.canvas.height) {
-        const vp_apect_ratio = w / h;
-        if (vp_apect_ratio > this.aspect_ratio) {
-            // Canvas wider than needed
-            w = h * this.aspect_ratio;
-        } else if (vp_apect_ratio < this.aspect_ratio) {
-            // Canvas taller than needed
-            h = w / this.aspect_ratio;
-        }
-        this.ctx.drawImage(this.img, 0, 0, w, h);
-    }
-}
-
-let img = new Img(data.img, ctx);
-
-addEventListener('resize', () => {
-    canvas.width = getCanvasDim().xDim;
-    canvas.height = getCanvasDim().yDim;
-    img.draw();
+window.addEventListener('resize', () => {
+    canvas.setWidth(getCanvasDim().xDim);
+    canvas.setHeight(getCanvasDim().xDim);
+    scaleToFit(canvas.backgroundImage, canvas);
+    // canvas.requestRenderAll();
+    console.log(canvas.backgroundImage.aspectRatio);
 });
 
-img.img.addEventListener(
-    'load',
-    function () {
-        img.aspect_ratio = img.img.naturalWidth / img.img.naturalHeight;
-        img.draw();
-    },
-    false
-);
+function initCanvas(id) {
+    const canvas = new fabric.Canvas('c', {
+        width: getCanvasDim().xDim,
+        height: getCanvasDim().yDim,
+    });
+    // canvas.requestRenderAll();
+    return canvas;
+}
+
+function setBackground(url, oCanvas) {
+    // FIXME: Does not scaleToFit properly
+    fabric.Image.fromURL(data.img, function (oImg) {
+        oCanvas.backgroundImage = oImg;
+        scaleToFit(oCanvas.backgroundImage, oCanvas);
+        oCanvas.backgroundImage.aspectRatio =
+            oCanvas.backgroundImage.width / oCanvas.backgroundImage.height;
+        oCanvas.requestRenderAll();
+    });
+}
 
 function getCanvasDim() {
-    const xDim = innerWidth;
-    const yDim = innerHeight - topbar.clientHeight;
+    const xDim = container.clientWidth;
+    const yDim = (innerHeight - topbar.clientHeight) * 0.75;
     return { xDim, yDim };
+}
+
+function scaleToFit(img, canvas) {
+    const canvasAspectRatio = canvas.width / canvas.height;
+    if (canvasAspectRatio > img.aspectRatio) {
+        // Container is wider than needed
+        img.scaleToHeight(canvas.height);
+    } else {
+        // Container is taller than needed
+        img.scaleToWidth(canvas.width);
+    }
 }

@@ -24,6 +24,16 @@ body {
     padding-right: 1rem;
 }
 
+.ml-med,
+.mb-med {
+    margin-left: 1rem;
+}
+
+.mr-med,
+.mb-med {
+    margin-right: 1rem;
+}
+
 .content-container {
     max-width: 100%;
     min-height: 5rem;
@@ -35,4 +45,8 @@ body {
 
 #topbar {
     height: 3em;
+}
+
+#c {
+    width: 100%;
 }

@@ -68,7 +68,12 @@ class Instance {
 
             // TODO: Use node to find all dependent edges here OR in edges
             // // Used to set redraw lines if move node.
-            // c.lineConnections = lineConnections;
+            c.lineConnections = Array();
+            this.skeleton.nodes[node].forEach((lineConn) => {
+                let fabricEdge = this.fabric.edges[lineConn.edgeIdx];
+                lineConn = getLineObj(fabricEdge, lineConn.isSrc);
+                c.lineConnections.push(lineConn);
+            });
 
             this.fabric.nodes.push(c);
         });
@@ -90,65 +95,22 @@ data.instances.forEach((inst) => {
     inst_idx += 1;
 });
 
-// let line = makeLine([250, 125, 250, 175], 'red'),
-//     line2 = makeLine([250, 175, 250, 250]),
-//     line3 = makeLine([250, 250, 300, 350]),
-//     line4 = makeLine([250, 250, 200, 350]),
-//     line5 = makeLine([250, 175, 175, 225], 'blue'),
-//     line6 = makeLine([250, 175, 325, 225]);
+canvas.on('object:moving', function (e) {
+    // TODO: Update data.instances.points.
+    var p = e.target;
+    p.lineConnections.forEach(function (lineConn) {
+        console.log(lineConn.line);
+        if (lineConn.isSrc) {
+            lineConn.line.set({ x1: p.left, y1: p.top });
+        } else {
+            lineConn.line.set({ x2: p.left, y2: p.top });
+        }
+    });
+    canvas.renderAll();
+});
 
-// canvas.add(line, line2, line3, line4, line5, line6);
-
-// canvas.add(
-//     makeCircle(
-//         line.get('x1'),
-//         line.get('y1'),
-//         [getLineObj(line, true)],
-//         'yellow'
-//     ),
-//     makeCircle(
-//         line.get('x2'),
-//         line.get('y2'),
-//         [
-//             getLineObj(line, false),
-//             getLineObj(line2, true),
-//             getLineObj(line5, true),
-//             getLineObj(line6, true),
-//         ],
-//         'yellow'
-//     ),
-//     makeCircle(
-//         line2.get('x2'),
-//         line2.get('y2'),
-//         [
-//             getLineObj(line2, false),
-//             getLineObj(line3, true),
-//             getLineObj(line4, true),
-//         ],
-//         'yellow'
-//     ),
-//     makeCircle(line3.get('x2'), line3.get('y2'), [getLineObj(line3, false)]),
-//     makeCircle(line4.get('x2'), line4.get('y2'), [getLineObj(line4, false)]),
-//     makeCircle(line5.get('x2'), line5.get('y2'), [getLineObj(line5, false)]),
-//     makeCircle(line6.get('x2'), line6.get('y2'), [getLineObj(line6, false)])
-// );
-
-// canvas.on('object:moving', function (e) {
-//     // TODO: Update data.instances.points.
-//     var p = e.target;
-//     p.lineConnections.forEach(function (lineConn) {
-//         console.log(lineConn.line);
-//         if (lineConn.isStart) {
-//             lineConn.line.set({ x1: p.left, y1: p.top });
-//         } else {
-//             lineConn.line.set({ x2: p.left, y2: p.top });
-//         }
-//     });
-//     canvas.renderAll();
-// });
-
-function getLineObj(line, isStart) {
-    return { line: line, isStart: isStart };
+function getLineObj(line, isSrc) {
+    return { line: line, isSrc: isSrc };
 }
 
 function initCanvas(id) {

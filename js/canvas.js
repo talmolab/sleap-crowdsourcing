@@ -8,6 +8,7 @@ canvas.setHeight(getCanvasDim().xDim);
 
 let fabricObjects = { lines: Array(), circles: Array() };
 let scaleFactor = 1;
+let zoom = 1;
 
 const sleapColors = [
     '#0090bd',
@@ -97,20 +98,47 @@ window.addEventListener('resize', () => {
 canvas.on('object:moving', function (e) {
     // Update position of edges when moving nodes.
     let p = e.target;
-    redrawLines(p);
-    // canvas.renderAll();
+    if (typeof p._objects === 'undefined') {
+        console.log(p);
+        redrawLines(p);
+        // canvas.renderAll();
 
-    // Update the unscaled data points..
-    p.unscaledX = p.left / scaleFactor;
-    p.unscaledY = p.top / scaleFactor;
+        // Update the unscaled data points..
+        p.unscaledX = p.left / scaleFactor;
+        p.unscaledY = p.top / scaleFactor;
 
-    // Update node in data
-    let dataNode = data.instances[p.inst_id].nodes[p.node];
-    dataNode.x = p.unscaledX;
-    dataNode.y = p.unscaledY;
+        // Update node in data
+        let dataNode = data.instances[p.inst_id].nodes[p.node];
+        dataNode.x = p.unscaledX;
+        dataNode.y = p.unscaledY;
 
-    // Update display of data on screen.
-    dataDisplay.textContent = JSON.stringify(data);
+        // Update display of data on screen.
+        dataDisplay.textContent = JSON.stringify(data);
+    } else {
+        // FIXME: Does not work when selecting multiple objects to move.
+        // TODO: Add data update here as well
+        console.log(p._objects);
+        p._objects.forEach((obj) => {
+            console.log(obj);
+            redrawLines(obj);
+        });
+    }
+});
+
+canvas.on('mouse:wheel', function (e) {
+    // TODO: Zoom into specific point.
+    // Update zoom.
+    zoom *= 0.999 ** e.e.deltaY;
+    if (zoom < 1) {
+        zoom = 1;
+    }
+    if (zoom > 100) {
+        zoom = 100;
+    }
+    this.setZoom(zoom);
+
+    // Prevent scrolling up and down while on canvas.
+    e.e.preventDefault();
 });
 
 function getLineObj(line, isSrc) {
@@ -202,7 +230,7 @@ function scaleToFit(
 }
 
 function scaleCircles(circles = Array(), scale = scaleFactor) {
-    // Rescale and reposition circles
+    // Rescale and reposition circles, also redraws lines
     let i = 0;
     circlesToScale.forEach((circle) => {
         circle.scale(scale);

@@ -4,7 +4,7 @@ const c = document.getElementById('c');
 
 const canvas = initCanvas('c');
 canvas.setWidth(getCanvasDim().xDim);
-canvas.setHeight(getCanvasDim().xDim);
+canvas.setHeight(getCanvasDim().yDim);
 
 let fabricObjects = { lines: Array(), circles: Array() };
 let scaleFactor = 1;
